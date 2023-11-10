@@ -16,6 +16,7 @@ from werkzeug.utils import secure_filename
 # Initializing flask app
 app = Flask(__name__)
 cors = CORS(app)
+app.secret_key = "super secret key"
 
 # azure account with document intelligence and storage account
 '''
@@ -37,49 +38,20 @@ def healthcheck():
     # Returning an api for showing in reactjs
     return {"status": "OK"}
 
-'''
-@app.route('/')
-def index():
-    return 'Index Page'
-
-
-@app.route('/hello')
-def hello():
-    return 'Hello, World'
-
-@app.route('/upload')
-def upload():
-   return 
-       #<form action = "http://localhost:5000/uploader" method = "POST" 
-       #enctype = "multipart/form-data">
-       #input type = "file" name = "file" />
-       #<input type = "submit"/>
-       #</form> 
-
-@app.route('/uploader')
-def uploader():
-   return "Result"
-
-@app.route('/upload')
-def upload_file():
-   return render_template('upload.html')
-
-
-@app.route('/uploader', methods = ['GET', 'POST'])
-def save_file():
-   if request.method == 'POST':
-      f = request.files['file']
-      f.save(secure_filename(f.filename))
-      return 'file uploaded successfully'
-      # return f
-'''
-
 ALLOWED_EXTENSIONS = {'pdf'}
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
+@app.route('/attempt', methods = ['POST'])   
+def attempt():   
+    if request.method == 'POST':   
+        f = request.files['file'] 
+        f.save(f.filename)   
+        return render_template("Acknowledgement.html", name = f.filename)
+    
 
 @app.route('/upload_file', methods=['GET', 'POST'])
 def upload_file():
@@ -96,6 +68,7 @@ def upload_file():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
+            
             try:
                 # Create the BlobServiceClient object
                 blob_service_client = BlobServiceClient(account_url=f"https://{storage_service}.blob.core.windows.net/", credential=storage_api_key)
@@ -109,21 +82,6 @@ def upload_file():
                     }, success=True)
             except:
                 return jsonify(success=False)
-
-
-
-'''
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/', methods=['POST'])
-def upload_file():
-    uploaded_file = request.files['file']
-    if uploaded_file.filename != '':
-        uploaded_file.save(uploaded_file.filename)
-    return redirect(url_for('index'))
-'''
 
 # Running app
 if __name__ == '__main__':
