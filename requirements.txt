@@ -11,4 +11,3 @@ pandas
 numpy
 flask
 flask_cors
-werkzeug.utils
