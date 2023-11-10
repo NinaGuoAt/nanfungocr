@@ -1,0 +1,21 @@
+{
+  "scriptFile": "__init__.py",
+  "bindings": [
+    {
+      "name": "myblob",
+      "type": "blobTrigger",
+      "direction": "in",
+      "path": "input",
+      "connection": "openaitestdata_STORAGE"
+    },
+    {
+      "type": "cosmosDB",
+      "direction": "out",
+      "name": "outputDocument",
+      "databaseName": "my-database",
+      "collectionName": "my-container",
+      "createIfNotExists": false,
+      "connectionStringSetting": "CosmosDbConnectionString"
+    }
+  ]
+}
