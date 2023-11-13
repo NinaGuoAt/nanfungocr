@@ -31,6 +31,11 @@ storage_service = "openaitestdata"
 storage_api_key = "ONYG9hw5vN4iqmsQWQ3bPF1MKX0SOghFZ7JstrbBD/8+XDduYLawrsPJvwNkKU7PhC4S+RgjqB33+AStuMN7Iw=="
 doc_container = "nanfungocrdemo"
 
+@app.route('/')
+def index():
+   print('Request for index page received')
+   return render_template('index.html')
+    
 # Route for seeing a data
 @app.route('/healthcheck', methods=["GET"])
 def healthcheck():
@@ -38,11 +43,9 @@ def healthcheck():
     return {"status": "OK"}
 
 ALLOWED_EXTENSIONS = {'pdf'}
-
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 
 @app.route('/attempt', methods = ['POST'])   
 def attempt():   
@@ -50,8 +53,7 @@ def attempt():
         f = request.files['file'] 
         f.save(f.filename)   
         return render_template("Acknowledgement.html", name = f.filename)
-    
-
+        
 @app.route('/upload_file', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
