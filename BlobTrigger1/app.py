@@ -1,17 +1,18 @@
 import logging
-from azure.storage.blob import BlobServiceClient
+from azure.storage.blob import BlobServiceClient, ContainerClient
 import azure.functions as func
 import json
 import time
-from requests import get, post
 import os
 import requests
+from requests import get, post
 from collections import OrderedDict
 import numpy as np
 import pandas as pd
 from flask import Flask, request, jsonify, flash, redirect, url_for, render_template
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
+import re
 
 # Initializing flask app
 app = Flask(__name__)
@@ -30,6 +31,10 @@ storage_service = "openaitestdata"
 storage_api_key = "ONYG9hw5vN4iqmsQWQ3bPF1MKX0SOghFZ7JstrbBD/8+XDduYLawrsPJvwNkKU7PhC4S+RgjqB33+AStuMN7Iw=="
 doc_container = "nanfungocrdemo"
 
+@app.route('/')
+def index():
+   print('Request for index page received')
+   return render_template('index.html')
 
 # Route for seeing a data
 # @app.route('/api/v2/upload', methods=["GET"])
