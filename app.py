@@ -31,13 +31,7 @@ storage_service = "openaitestdata"
 storage_api_key = "ONYG9hw5vN4iqmsQWQ3bPF1MKX0SOghFZ7JstrbBD/8+XDduYLawrsPJvwNkKU7PhC4S+RgjqB33+AStuMN7Iw=="
 doc_container = "nanfungocrdemo"
 
-@app.route('/')
-def index():
-   print('Request for index page received')
-   return render_template('index.html')
-
 # Route for seeing a data
-# @app.route('/api/v2/upload', methods=["GET"])
 @app.route('/healthcheck', methods=["GET"])
 def healthcheck():
     # Returning an api for showing in reactjs
