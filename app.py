@@ -71,7 +71,7 @@ def upload_file():
                 blob_service_client = BlobServiceClient(account_url=f"https://{storage_service}.blob.core.windows.net/", credential=storage_api_key)
                 container_client = blob_service_client.get_container_client(doc_container)
                 blob_client = container_client.get_blob_client(filename)
-                blob_client.upload_blob(file, overwrite=True, content_type=ContentSettings(content_type='application/pdf'))
+                blob_client.upload_blob(file, overwrite=True, content_type='application/pdf')
                 url = blob_client.url
                 return jsonify({
                         "filename":filename,
