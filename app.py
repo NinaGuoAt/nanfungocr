@@ -1,5 +1,5 @@
 import logging
-from azure.storage.blob import BlobServiceClient, ContainerClient
+from azure.storage.blob import BlobServiceClient, ContentSettings
 import azure.functions as func
 import json
 import time
@@ -30,7 +30,7 @@ storage_account_key = "ONYG9hw5vN4iqmsQWQ3bPF1MKX0SOghFZ7JstrbBD/8+XDduYLawrsPJv
 storage_service = "openaitestdata"
 storage_api_key = "ONYG9hw5vN4iqmsQWQ3bPF1MKX0SOghFZ7JstrbBD/8+XDduYLawrsPJvwNkKU7PhC4S+RgjqB33+AStuMN7Iw=="
 doc_container = "input"
-# doc_container = "nanfungocrdemo"
+
 
 @app.route('/')
 def index():
@@ -49,15 +49,6 @@ ALLOWED_EXTENSIONS = {'pdf'}
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-@app.route('/attempt', methods = ['POST'])   
-def attempt():   
-    if request.method == 'POST':   
-        f = request.files['file'] 
-        f.save(f.filename)   
-        return render_template("Acknowledgement.html", name = f.filename)
-    
 
 @app.route('/upload_file', methods=['GET', 'POST'])
 def upload_file():
@@ -80,7 +71,7 @@ def upload_file():
                 blob_service_client = BlobServiceClient(account_url=f"https://{storage_service}.blob.core.windows.net/", credential=storage_api_key)
                 container_client = blob_service_client.get_container_client(doc_container)
                 blob_client = container_client.get_blob_client(filename)
-                blob_client.upload_blob(file, overwrite=True)
+                blob_client.upload_blob(file, overwrite=True, content_type=ContentSettings(content_type='application/pdf'))
                 url = blob_client.url
                 return jsonify({
                         "filename":filename,
@@ -88,6 +79,7 @@ def upload_file():
                     }, success=True)
             except:
                 return jsonify(success=False)
+            
 
 # Running app
 if __name__ == '__main__':
