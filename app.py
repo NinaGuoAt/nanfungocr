@@ -13,6 +13,7 @@ from flask import Flask, request, jsonify, flash, redirect, url_for, render_temp
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import re
+from datetime import datetime
 
 # Initializing flask app
 app = Flask(__name__)
@@ -65,16 +66,20 @@ def upload_file():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
+            current_time = datetime.now().strftime("%Y%m%d%H%M%S")
+            name, extension = os.path.splitext(filename)
+            new_filename = f"{name}_{current_time}{extension}"
             
             try:
                 # Create the BlobServiceClient object
                 blob_service_client = BlobServiceClient(account_url=f"https://{storage_service}.blob.core.windows.net/", credential=storage_api_key)
                 container_client = blob_service_client.get_container_client(doc_container)
-                blob_client = container_client.get_blob_client(filename)
+                blob_client = container_client.get_blob_client(new_filename)
+                # blob_client.upload_blob(file, overwrite=True, content_type=ContentSettings(content_type='application/pdf'))
                 blob_client.upload_blob(file, overwrite=True, content_type='application/pdf')
                 url = blob_client.url
                 return jsonify({
-                        "filename":filename,
+                        "filename":new_filename,
                         "url": url
                     }, success=True)
             except:
