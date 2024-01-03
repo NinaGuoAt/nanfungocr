@@ -14,6 +14,7 @@ from flask_cors import CORS
 from werkzeug.utils import secure_filename
 import re
 from datetime import datetime
+import backend
 
 # Initializing flask app
 app = Flask(__name__)
@@ -86,78 +87,8 @@ def upload_file():
                 return jsonify(success=False)
 
 @app.route('/run_func', methods=['GET', 'POST'])
-def run_func(myblob: func.InputStream, outputDocument: func.Out[func.Document]):
-    logging.info(f"Python blob trigger function processed blob \n"
-                 f"Name: {myblob.name}\n"
-                 f"Blob Size: {myblob.length} bytes")
-
-    # azure account with document intelligence and storage account
-    endpoint = "https://nanfungdocint.cognitiveservices.azure.com/"
-    apim_key = "d292acca02da47a2a2afb8265aec2ff6"
-    storage_account_name = "openaitestdata"
-    storage_account_key = "ONYG9hw5vN4iqmsQWQ3bPF1MKX0SOghFZ7JstrbBD/8+XDduYLawrsPJvwNkKU7PhC4S+RgjqB33+AStuMN7Iw=="
-        
-    model_id = "modelnf2"
-    post_url = endpoint + f"/formrecognizer/documentModels/{model_id}:analyze?api-version=2023-07-31"
-    # Ref: https://westus2.dev.cognitive.microsoft.com/docs/services/form-recognizer-api-2023-07-31/operations/GetAnalyzeDocumentResult
-    headers = {
-            # Request headers
-            'Content-Type': 'application/pdf',
-            'Ocp-Apim-Subscription-Key': apim_key,
-        }
-    source = myblob.read()
-    
-    # Query the service and get the returned data
-    resp = requests.post(url=post_url, data=source, headers=headers)
-    if resp.status_code != 202:
-        print("POST analyze failed:\n%s" % resp.text)
-        quit()
-    print("POST analyze succeeded:\n%s" % resp.headers)
-    get_url = resp.headers["operation-location"]
-
-    wait_sec = 10
-    logging.info(f"waiting {wait_sec} seconds ...")
-    time.sleep(wait_sec)
-    logging.info(f"finish waiting ...")
-    # The layout API is async therefore the wait statement
-
-    text1 = os.path.basename(myblob.name)
-    resp = requests.get(url=get_url, headers={"Ocp-Apim-Subscription-Key": apim_key})
-    decoded_content = resp.text.encode('cp950', errors='ignore').decode('cp950')
-    resp_json = json.loads(decoded_content)
-    logging.info(resp_json)
-    status = resp_json["status"]
-    logging.info(f"response status: {status}")
-
-    if status == "succeeded":
-        print("GET Analysis succeeded:\n%s")
-        results = resp_json
-    else:
-        print("GET Layout results failed:\n%s")
-        quit()
-
-    results = resp_json
-    
-    # Parses the returned Document Intelligence response, constructs a .csv file, and uploads it to the output container
-    key_value_dict = results['analyzeResult']['documents'][0]['fields']
-    cleaned_key_value_dict = {
-        "FileName": myblob.name,
-        "DueDate":key_value_dict.get("DueDate", {}).get("valueString", "Not Applicable"),
-        "InvoiceDate":key_value_dict.get("InvoiceDate", {}).get("valueString", "Not Applicable"),
-        "InvoiceTotal":key_value_dict.get("InvoiceTotal", {}).get("valueString", "Not Applicable"),
-        "AmountDue":key_value_dict.get("AmountDue", {}).get("valueString", "Not Applicable"),
-        "ContactPerson":key_value_dict.get("ContactPerson", {}).get("valueString", "Not Applicable"),
-        "Email":key_value_dict.get("Email", {}).get("valueString", "Not Applicable"),
-        "VendorName":key_value_dict.get("VendorName", {}).get("valueString", "Not Applicable"),
-        "VendorAddress":key_value_dict.get("VendorAddress", {}).get("valueString", "Not Applicable"),
-        "InvoiceId":key_value_dict.get("InvoiceId", {}).get("valueString", "Not Applicable"),
-        "URL": "https://openaitestdata.blob.core.windows.net/"+myblob.name
-        }
-        
-    print(cleaned_key_value_dict)
-    df = pd.DataFrame([cleaned_key_value_dict])
-    outputDocument.set(func.Document.from_dict(cleaned_key_value_dict))
-    logging.info("Finished !!!")
+def run_func():
+   backend.main(func.InputStream, func.Out[func.Document])
 
 # Running app
 if __name__ == '__main__':
