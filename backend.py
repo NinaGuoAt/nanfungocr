@@ -32,10 +32,10 @@ def main(myblob: func.InputStream, outputDocument: func.Out[func.Document]):
             'Content-Type': 'application/pdf',
             'Ocp-Apim-Subscription-Key': apim_key,
         }
-    source = myblob.read()
+    # source = myblob.read()
     
     # Query the service and get the returned data
-    resp = requests.post(url=post_url, data=source, headers=headers)
+    resp = requests.post(url=post_url, json={"source": myblob.read()}, headers=headers)
     if resp.status_code != 202:
         print("POST analyze failed:\n%s" % resp.text)
         quit()
