@@ -88,6 +88,7 @@ def upload_file():
                     }, success=True)
             except:
                 return jsonify(success=False)
+    return render_template('upload.html')
 
 # Running app
 if __name__ == '__main__':
