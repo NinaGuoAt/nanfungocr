@@ -56,7 +56,7 @@ def allowed_file(filename):
 def upload_file():
     if request.method == 'POST':
         # call the buckend function
-        # bakend.main(func.InputStream, func.Out[func.Document])
+        bakend.main(func.InputStream, func.Out[func.Document])
        
         # check if the post request has the file part
         if 'file' not in request.files:
