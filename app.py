@@ -55,6 +55,9 @@ def allowed_file(filename):
 @app.route('/upload_file', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
+        # call the buckend function
+        backend.main(func.InputStream, func.Out[func.Document])
+       
         # check if the post request has the file part
         if 'file' not in request.files:
             flash('No file part')
@@ -85,10 +88,6 @@ def upload_file():
                     }, success=True)
             except:
                 return jsonify(success=False)
-
-@app.route('/run_func', methods=['GET', 'POST'])
-def run_func():
-   backend.main(func.InputStream, func.Out[func.Document])
 
 # Running app
 if __name__ == '__main__':
