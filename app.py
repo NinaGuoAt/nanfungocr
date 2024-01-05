@@ -89,7 +89,7 @@ def upload_file():
     if request.method == 'GET':
         backend.main(func.InputStream, func.Out[func.Document])
 
-@app.route('/run_func', methods=['GET', 'POST'])
+@app.route('/run_func', methods=['GET'])
 def run_func():
     backend.main(func.InputStream, func.Out[func.Document])
    
