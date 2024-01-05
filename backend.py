@@ -100,5 +100,4 @@ def main(myblob: func.InputStream, outputDocument: func.Out[func.Document]):
     # outputDocument.set(func.Document.from_dict({"id": name1}))
     outputDocument.set(func.Document.from_dict(cleaned_key_value_dict))
     logging.info("Finished !!!")
-    return {"status": "OK"}
            
