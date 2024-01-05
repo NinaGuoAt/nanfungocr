@@ -87,7 +87,8 @@ def upload_file():
             except:
                 return jsonify(success=False)
     if request.method == 'GET':
-        backend.main(func.InputStream, func.Out[func.Document])
+        return {"status": "OK"}
+        # backend.main(func.InputStream, func.Out[func.Document])
 
 @app.route('/run_func', methods=['GET'])
 def run_func():
