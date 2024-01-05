@@ -79,13 +79,19 @@ def upload_file():
                 blob_client.upload_blob(file, overwrite=True, content_type='application/pdf')
                 url = blob_client.url
                 # call the buckend function
-                backend.main(file, func.Out[func.Document])
+                # backend.main(file, func.Out[func.Document])
                 return jsonify({
                         "filename":new_filename,
                         "url": url
                     }, success=True)
             except:
                 return jsonify(success=False)
+    if request.method == 'GET':
+        backend.main(func.InputStream, func.Out[func.Document])
+
+@app.route('/run_func', methods=['GET', 'POST'])
+def run_func():
+    backend.main(func.InputStream, func.Out[func.Document])
    
 # Running app
 if __name__ == '__main__':
