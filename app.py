@@ -89,7 +89,8 @@ def upload_file():
 
 @app.route('/run_func', methods=['GET'])
 def run_func():
-    backend.main(func.InputStream, func.Out[func.Document])
+    return {"status": "Can Run"}
+    # backend.main(func.InputStream, func.Out[func.Document])
    
 # Running app
 if __name__ == '__main__':
