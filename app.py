@@ -89,7 +89,12 @@ def upload_file():
 
 @app.route('/run_func', methods=['GET'])
 def run_func():
-    return {"status": "Can Run"}
+    functionkey = "AD8Lp7DnVb1ydVHKSuVFMjiF5D8-AtTpGGhIEwFzqLXuAzFu4LCUkg=="
+    function_url = f"https://functionAppNF18.azurewebsites.net/api/BlobTriggerNew?code={functionkey}"
+    # function_url = "https://<function-app-name>.azurewebsites.net/api/<function-name>?code=<function-key>"
+    response = requests.get(function_url)
+    return(response)
+    # return {"status": "Can Run"}
     # backend.main(func.InputStream, func.Out[func.Document])
    
 # Running app
